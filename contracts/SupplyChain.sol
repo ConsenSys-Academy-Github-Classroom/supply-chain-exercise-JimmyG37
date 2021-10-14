@@ -8,7 +8,7 @@ contract SupplyChain {
   // <skuCount>
   uint public skuCount;
   // <items mapping>
-  mapping(uint => Item) public item;
+  mapping(uint => Item) public items;
   // <enum State: ForSale, Sold, Shipped, Received>
   enum State { ForSale, Sold, Shipped, Received }
   // <struct Item: name, sku, price, state, seller, and buyer>
@@ -17,21 +17,21 @@ contract SupplyChain {
     uint sku;
     uint price;
     State state;
-    address payable seller;
-    address payable buyer;
+    address seller;
+    address buyer;
   }
   /*
    * Events
    */
 
   // <LogForSale event: sku arg>
-
+  event LogForSale(uint sku);
   // <LogSold event: sku arg>
-
+  event LogSold(uint sku);
   // <LogShipped event: sku arg>
-
+  event LogShipped(uint sku);
   // <LogReceived event: sku arg>
-
+  event LogReceived(uint sku);
 
   /*
    * Modifiers
@@ -72,16 +72,29 @@ contract SupplyChain {
   // modifier shipped(uint _sku)
   // modifier received(uint _sku)
 
-  constructor() public {
+  constructor() {
     // 1. Set the owner to the transaction sender
-    // 2. Initialize the sku count to 0. Question, is this necessary?
+    owner = msg.sender;
+    // 2. Initialize the sku count to 0., is this necessary?
+    skuCount = 0;
   }
 
   function addItem(string memory _name, uint _price) public returns (bool) {
     // 1. Create a new item and put in array
+    items[skuCount] = Item({
+      name: _name,
+      sku: skuCount,
+      price: _price,
+      state: State.ForSale,
+      seller: msg.sender,
+      buyer: address(0)
+    });
     // 2. Increment the skuCount by one
+    skuCount = skuCount + 1;
     // 3. Emit the appropriate event
+    emit LogForSale(skuCount);
     // 4. return true
+    return true;
 
     // hint:
     // items[skuCount] = Item({
