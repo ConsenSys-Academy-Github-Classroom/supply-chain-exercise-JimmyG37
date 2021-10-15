@@ -17,8 +17,8 @@ contract SupplyChain {
     uint sku;
     uint price;
     State state;
-    address seller;
-    address buyer;
+    address payable seller;
+    address payable buyer;
   }
   /*
    * Events
@@ -40,6 +40,10 @@ contract SupplyChain {
   // Create a modifer, `isOwner` that checks if the msg.sender is the owner of the contract
 
   // <modifier: isOwner
+  modifier isOwner (address _address) {
+    require(owner == _address);
+    _;
+  }
 
   modifier verifyCaller (address _address) {
     // require (msg.sender == _address);
@@ -72,7 +76,7 @@ contract SupplyChain {
   // modifier shipped(uint _sku)
   // modifier received(uint _sku)
 
-  constructor() {
+  constructor() public {
     // 1. Set the owner to the transaction sender
     owner = msg.sender;
     // 2. Initialize the sku count to 0., is this necessary?
@@ -139,15 +143,15 @@ contract SupplyChain {
   function receiveItem(uint sku) public {}
 
   // Uncomment the following code block. it is needed to run tests
-  /* function fetchItem(uint _sku) public view */
-  /*   returns (string memory name, uint sku, uint price, uint state, address seller, address buyer) */
-  /* { */
-  /*   name = items[_sku].name; */
-  /*   sku = items[_sku].sku; */
-  /*   price = items[_sku].price; */
-  /*   state = uint(items[_sku].state); */
-  /*   seller = items[_sku].seller; */
-  /*   buyer = items[_sku].buyer; */
-  /*   return (name, sku, price, state, seller, buyer); */
-  /* } */
+  function fetchItem(uint _sku) public view
+    returns (string memory name, uint sku, uint price, uint state, address seller, address buyer)
+    {
+     name = items[_sku].name;
+     sku = items[_sku].sku;
+     price = items[_sku].price;
+     state = uint(items[_sku].state);
+     seller = items[_sku].seller;
+     buyer = items[_sku].buyer;
+     return (name, sku, price, state, seller, buyer);
+   }
 }
